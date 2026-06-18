@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>Свадебный навигатор • Александра и Дмитрий</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #faf8f5;
+      font-family: 'Georgia', 'Times New Roman', Times, serif;
+      color: #3e3a37;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    .tabs-container {
+      width: 100%;
+      max-width: 700px;
+      margin: 20px auto 0;
+      display: flex;
+      gap: 10px;
+      padding: 0 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 14px 10px;
+      background: #f3ede5;
+      border: 1px solid #dccdb4;
+      border-radius: 40px;
+      font-family: 'Playfair Display', 'Georgia', serif;
+      font-size: 1rem;
+      cursor: pointer;
+      color: #5e5342;
+      transition: all 0.25s;
+      text-align: center;
+    }
+
+    .tab-btn.active {
+      background: #b49450;
+      color: white;
+      border-color: #b49450;
+      box-shadow: 0 8px 14px rgba(180, 148, 80, 0.3);
+    }
+
+    .panel {
+      display: none;
+      max-width: 700px;
+      width: 100%;
+      margin: 15px auto 40px;
+      padding: 0 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .container {
+      background: rgba(255, 255, 250, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 48px;
+      padding: 32px 24px;
+      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.05), 0 8px 18px rgba(180, 150, 110, 0.15);
+      border: 1px solid #ede3d3;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: 'Playfair Display', 'Times New Roman', Georgia, serif;
+      font-weight: 400;
+    }
+
+    .gold-accent {
+      color: #b49450;
+    }
+
+    .greeting {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .greeting h1 {
+      font-size: clamp(2.2rem, 10vw, 3.2rem);
+      margin-bottom: 8px;
+    }
+
+    .guest-selector {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .guest-selector select {
+      padding: 12px 24px;
+      border-radius: 30px;
+      border: 2px solid #b49450;
+      font-family: 'Georgia', serif;
+      font-size: 1.1rem;
+      background: white;
+      color: #3e3a37;
+      cursor: pointer;
+      min-width: 250px;
+    }
+
+    .guest-name {
+      font-size: 2rem;
+      color: #b49450;
+      font-style: italic;
+      border-bottom: 2px dashed #e1cfb0;
+      display: inline-block;
+      padding-bottom: 6px;
+    }
+
+    .countdown-section {
+      background: #fffbf4;
+      border-radius: 60px;
+      padding: 22px 18px;
+      margin: 28px 0 32px;
+      border: 1px solid #ebdcc8;
+      text-align: center;
+    }
+
+    .timer {
+      font-size: 2.4rem;
+      font-weight: 300;
+      color: #b49450;
+      letter-spacing: 1px;
+    }
+
+    .timeline h2,
+    .seating h2,
+    .menu-section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #5e5549;
+      border-left: 5px solid #b49450;
+      padding-left: 18px;
+    }
+
+    .event-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .event {
+      background: #ffffff;
+      border-radius: 40px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border: 1px solid #f1e8d9;
+      transition: 0.3s;
+    }
+
+    .event.active {
+      background: #fff9ed;
+      border: 1.5px solid #b49450;
+      box-shadow: 0 8px 18px rgba(180, 148, 80, 0.2);
+      animation: pulseGold 1.8s infinite;
+    }
+
+    @keyframes pulseGold {
+      0% {
+        box-shadow: 0 0 0 0 rgba(180, 148, 80, 0.35);
+      }
+      70% {
+        box-shadow: 0 0 0 12px rgba(180, 148, 80, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(180, 148, 80, 0);
+      }
+    }
+
+    .event-emoji {
+      font-size: 2rem;
+      background: #f7f1e4;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .event-info {
+      flex: 1;
+    }
+
+    .event-time {
+      font-weight: bold;
+      color: #b49450;
+    }
+
+    .event-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      margin: 4px 0;
+    }
+
+    .event-desc {
+      font-size: 0.85rem;
+      color: #6b6258;
+    }
+
+    .seating-svg {
+      width: 100%;
+      height: auto;
+      background: #fdfaf5;
+      border-radius: 60px;
+      padding: 15px;
+      margin: 15px 0 25px;
+    }
+
+    .table-circle {
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .table-circle:hover {
+      transform: scale(1.04);
+    }
+
+    .table-highlight {
+      filter: drop-shadow(0 0 12px #d4af37);
+    }
+
+    .table-tooltip {
+      background: #fffbf4;
+      border-radius: 24px;
+      padding: 12px 16px;
+      margin-top: 10px;
+      border: 1px solid #ede3d3;
+    }
+
+    .menu-category {
+      margin-bottom: 16px;
+      border-bottom: 1px solid #efe2cf;
+    }
+
+    .menu-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.3rem;
+      font-family: 'Playfair Display', serif;
+      cursor: pointer;
+      padding: 12px 0;
+    }
+
+    .dishes {
+      display: none;
+      padding-left: 12px;
+    }
+
+    .dishes.open {
+      display: block;
+    }
+
+    .dish {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+    }
+
+    .allergy-warning {
+      color: #c0392b;
+      font-weight: bold;
+      margin-left: 4px;
+    }
+
+    .qr-section {
+      text-align: center;
+      margin-top: 45px;
+    }
+
+    .qr-btn {
+      background: #b49450;
+      border: none;
+      color: white;
+      font-family: 'Georgia', serif;
+      font-size: 1rem;
+      padding: 14px 32px;
+      border-radius: 60px;
+      cursor: pointer;
+      box-shadow: 0 10px 15px rgba(180, 148, 80, 0.25);
+      margin-bottom: 20px;
+    }
+
+    #qrcode {
+      margin: 10px auto;
+      background: white;
+      padding: 12px;
+      border-radius: 28px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .admin-panel {
+      background: #fffbf4;
+      border-radius: 40px;
+      padding: 25px 20px;
+    }
+
+    .admin-section {
+      background: white;
+      border-radius: 30px;
+      padding: 20px;
+      margin-bottom: 25px;
+      border: 1px solid #ede3d3;
+    }
+
+    .admin-section h3 {
+      color: #b49450;
+      margin-bottom: 15px;
+      font-size: 1.4rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .input-group label {
+      min-width: 100px;
+      font-weight: bold;
+      color: #5e5342;
+    }
+
+    .input-group input,
+    .input-group select {
+      padding: 10px 14px;
+      border-radius: 30px;
+      border: 1px solid #dccdb4;
+      font-family: 'Georgia', serif;
+      background: #fefcf7;
+    }
+
+    .time-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f9f5ec;
+      padding: 10px 15px;
+      border-radius: 30px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .time-row span {
+      font-weight: bold;
+      min-width: 70px;
+    }
+
+    .save-btn {
+      background: #b49450;
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 40px;
+      font-family: 'Georgia', serif;
+      font-size: 1rem;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    /* Модальное окно */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 48px;
+      padding: 35px 28px;
+      max-width: 360px;
+      width: 90%;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      position: relative;
+      z-index: 10000;
+    }
+
+    .modal h3 {
+      font-size: 1.6rem;
+      color: #b49450;
+      margin-bottom: 20px;
+    }
+
+    .modal input {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 40px;
+      border: 1.5px solid #dccdb4;
+      font-size: 1.2rem;
+      text-align: center;
+      font-family: 'Georgia', serif;
+      margin-bottom: 18px;
+      letter-spacing: 4px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 40px;
+      border: none;
+      font-family: 'Georgia', serif;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .modal-btn.primary {
+      background: #b49450;
+      color: white;
+    }
+
+    .modal-btn.secondary {
+      background: #ede3d3;
+      color: #5e5342;
+    }
+
+    .error-msg {
+      color: #c0392b;
+      font-size: 0.9rem;
+      margin-top: -8px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 24px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="tabs-container">
+    <button class="tab-btn active" id="guestTabBtn">🌸 Гость</button>
+    <button class="tab-btn" id="adminTabBtn">⚙️ Автор проекта</button>
+  </div>
+
+  <div class="panel active" id="guestPanel">
+    <div class="container" id="guestContent"></div>
+  </div>
+
+  <div class="panel" id="adminPanel">
+    <div class="container admin-panel" id="adminContent"></div>
+  </div>
+
+  <!-- Модальное окно (изначально скрыто) -->
+  <div class="modal-overlay hidden" id="passwordModal">
+    <div class="modal">
+      <h3>🔐 Доступ к настройкам</h3>
+      <p style="color:#6b6258; margin-bottom:16px;">Введите пароль для входа в панель автора</p>
+      <input type="password" id="passwordInput" placeholder="••••" maxlength="10" autocomplete="off">
+      <div class="error-msg hidden" id="passwordError">Неверный пароль</div>
+      <div class="modal-buttons">
+        <button class="modal-btn secondary" id="cancelPasswordBtn">Отмена</button>
+        <button class="modal-btn primary" id="confirmPasswordBtn">Войти</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // ========== ДАННЫЕ ==========
+      const defaultData = {
+        bride: "Александра",
+        groom: "Дмитрий",
+        date: "2026-06-18T15:00:00",
+        guests: [
+          { id: "g1", name: "Анна", table: 1, allergies: ["орехи"] },
+          { id: "g2", name: "Максим", table: 1, allergies: [] },
+          { id: "g3", name: "Екатерина", table: 2, allergies: ["глютен"] },
+          { id: "g4", name: "Алексей", table: 2, allergies: [] },
+          { id: "g5", name: "Ольга", table: 3, allergies: ["молочные продукты"] },
+          { id: "g6", name: "Иван", table: 3, allergies: [] }
+        ],
+        timeline: [
+          { time: "15:00", title: "Церемония", description: "Выездная регистрация в саду", icon: "💒" },
+          { time: "16:00", title: "Фуршет", description: "Лёгкие закуски и игристое", icon: "🥂" },
+          { time: "17:30", title: "Банкет", description: "Праздничный ужин", icon: "🍽️" },
+          { time: "19:00", title: "Торт", description: "Разрезание свадебного торта", icon: "🎂" },
+          { time: "20:00", title: "Танцы", description: "Первый танец и вечеринка", icon: "💃" }
+        ],
+        tables: [
+          { number: 1, name: "Романтики", guests: ["Анна", "Максим"] },
+          { number: 2, name: "Путешественники", guests: ["Екатерина", "Алексей"] },
+          { number: 3, name: "Семейный", guests: ["Ольга", "Иван"] }
+        ],
+        menu: [
+          { category: "Закуски", dishes: ["Тартар из тунца", "Брускетта с авокадо", "Сырное ассорти", "Ореховый микс"] },
+          { category: "Горячее", dishes: ["Утиная грудка", "Ризотто с грибами", "Стейк из лосося", "Паста с морепродуктами (глютен)"] },
+          { category: "Десерты", dishes: ["Чизкейк (молочный)", "Шоколадный фондан", "Макарон (орехи)", "Фруктовый салат"] },
+          { category: "Бар", dishes: ["Шампанское", "Вино", "Коктейль Нежность", "Сок"] }
+        ]
+      };
+
+      const CORRECT_PASSWORD = "2310";
+      let weddingData = JSON.parse(JSON.stringify(defaultData));
+      let adminAuthenticated = false;
+      let currentGuest = weddingData.guests[0]; // По умолчанию первый гость
+
+      // Загрузка из localStorage
+      if (localStorage.getItem('weddingCustomData')) {
+        try {
+          const saved = JSON.parse(localStorage.getItem('weddingCustomData'));
+          weddingData = saved;
+          currentGuest = weddingData.guests[0];
+        } catch (e) {}
+      }
+
+      function saveData() {
+        localStorage.setItem('weddingCustomData', JSON.stringify(weddingData));
+      }
+
+      // ========== ФУНКЦИИ ==========
+      function getTimeUntil(dateStr) {
+        const weddingDate = new Date(dateStr);
+        const now = new Date();
+        const diff = weddingDate - now;
+        if (diff <= 0) return { text: "🎉 Свадьба уже началась!" };
+        const days = Math.floor(diff / 86400000);
+        const hours = Math.floor((diff % 86400000) / 3600000);
+        const minutes = Math.floor((diff % 3600000) / 60000);
+        const seconds = Math.floor((diff % 60000) / 1000);
+        return { text: `${days}д ${hours}ч ${minutes}м ${seconds}с` };
+      }
+
+      function findActiveIndex(timeline, weddingDate) {
+        const now = new Date();
+        const weddingDay = new Date(weddingDate);
+        if (now < weddingDay) return 0;
+        for (let i = 0; i < timeline.length; i++) {
+          const [h, m] = timeline[i].time.split(':').map(Number);
+          const eventTime = new Date(weddingDay);
+          eventTime.setHours(h, m, 0, 0);
+          if (now < eventTime) return i;
+        }
+        return timeline.length - 1;
+      }
+
+      function dishHasAllergen(dish, allergies) {
+        const d = dish.toLowerCase();
+        return allergies.some(a => {
+          if (a === 'орехи' && (d.includes('орех') || d.includes('миндаль'))) return true;
+          if (a === 'глютен' && (d.includes('глютен') || d.includes('паста'))) return true;
+          if (a === 'молочные продукты' && (d.includes('молоч') || d.includes('сыр') || d.includes('чизкейк'))) return true;
+          return false;
+        });
+      }
+
+      function renderGuest(guest) {
+        if (!guest) guest = currentGuest;
+        const timerData = getTimeUntil(weddingData.date);
+        const activeIdx = findActiveIndex(weddingData.timeline, weddingData.date);
+        const guestAllergies = guest.allergies.map(a => a.toLowerCase());
+        
+        const tablePositions = [{ cx: 90, cy: 80, n: 1 }, { cx: 210, cy: 80, n: 2 }, { cx: 150, cy: 165, n: 3 }];
+        let svgCircles = '';
+        tablePositions.forEach(p => {
+          const tbl = weddingData.tables.find(t => t.number === p.n);
+          const isMine = p.n === guest.table;
+          svgCircles +=
+            `<circle cx="${p.cx}" cy="${p.cy}" r="32" fill="${isMine?'#d4af37':'#f3e9d2'}" stroke="${isMine?'#b49450':'#cfbc93'}" stroke-width="2.5" class="table-circle ${isMine?'table-highlight':''}" data-table="${p.n}" />
+        <text x="${p.cx}" y="${p.cy+4}" text-anchor="middle" fill="${isMine?'#fff':'#5e5342'}" font-size="14" font-weight="bold">${p.n}<\/text>`;
+        });
+
+        let menuHtml = '';
+        weddingData.menu.forEach(cat => {
+          menuHtml +=
+            `<div class="menu-category"><div class="menu-header" data-cat="${cat.category}"><span>${cat.category}<\/span><span>▾<\/span><\/div>
+        <div class="dishes" data-cat="${cat.category}">${cat.dishes.map(d=>`<div class="dish">🍴 ${d} ${dishHasAllergen(d,guestAllergies)?'<span class="allergy-warning">⚠��� аллерген<\/span>':''}<\/div>`).join('')}<\/div><\/div>`;
+        });
+
+        // Создаем список гостей для выпадающего меню
+        const guestOptions = weddingData.guests.map(g => 
+          `<option value="${g.id}" ${g.id === guest.id ? 'selected' : ''}>${g.name} (Стол ${g.table})<\/option>`
+        ).join('');
+
+        document.getElementById('guestContent').innerHTML = `
+        <div class="greeting"><h1>${weddingData.bride} & ${weddingData.groom}<\/h1><\/div>
+        <div class="guest-selector">
+          <select id="guestSelect">
+            <option value="">-- Выберите гостя --<\/option>
+            ${guestOptions}
+          <\/select>
+        <\/div>
+        <div class="guest-name">${guest.name}, добро пожаловать!<\/div>
+        <div class="countdown-section"><div style="font-size:0.9rem;color:#8b7a62;">До начала:<\/div><div class="timer" id="countdownTimer">${timerData.text}<\/div><\/div>
+        <div class="timeline"><h2>⏳ Таймлайн<\/h2><div class="event-list">${weddingData.timeline.map((e,i)=>`<div class="event ${i===activeIdx?'active':''}"><div class="event-emoji">${e.icon}<\/div><div class="event-info"><div class="event-time">${e.time}<\/div><div class="event-title">${e.title}<\/div><div class="event-desc">${e.description}<\/div><\/div><\/div>`).join('')}<\/div><\/div>
+        <div class="seating"><h2>🪑 План рассадки<\/h2><svg viewBox="0 0 300 230" class="seating-svg">${svgCircles}<\/svg><div id="tableDetails" class="table-tooltip">Ваш стол: ${guest.table} «${weddingData.tables.find(t=>t.number===guest.table)?.name||''}<\/div><\/div>
+        <div class="menu-section"><h2>🍽️ Меню<\/h2>${menuHtml}${guestAllergies.length?`<p style="color:#b49450;">⚠️ Учтены ваши аллергии: ${guest.allergies.join(', ')}<\/p>`:''}<\/div>
+        <div class="qr-section"><button class="qr-btn" id="showQrBtn">📱 Показать QR-код для ${guest.name}<\/button><div id="qrcode" class="hidden"><\/div><\/div>
+      `;
+
+        // Обработчик выбора гостя
+        const guestSelect = document.getElementById('guestSelect');
+        if (guestSelect) {
+          guestSelect.addEventListener('change', function() {
+            const selectedId = this.value;
+            if (selectedId) {
+              const selectedGuest = weddingData.guests.find(g => g.id === selectedId);
+              if (selectedGuest) {
+                currentGuest = selectedGuest;
+                renderGuest(selectedGuest);
+              }
+            }
+          });
+        }
+
+        // Аккордеон меню
+        document.querySelectorAll('.menu-header').forEach(h => h.addEventListener('click', function() {
+          const cat = this.dataset.cat;
+          const dishesDiv = document.querySelector(`.dishes[data-cat="${cat}"]`);
+          if (dishesDiv) dishesDiv.classList.toggle('open');
+        }));
+        const firstDish = document.querySelector('.dishes');
+        if (firstDish) firstDish.classList.add('open');
+
+        // Клик по столам
+        document.querySelectorAll('.table-circle').forEach(c => c.addEventListener('click', function() {
+          const n = parseInt(this.dataset.table);
+          const t = weddingData.tables.find(t => t.number === n);
+          const details = document.getElementById('tableDetails');
+          if (details && t) details.innerHTML =
+            `✨ Стол ${n} «${t.name}»: ${t.guests.join(', ')}`;
+        }));
+
+        // QR-код
+        let qrGenerated = false;
+        const qrBtn = document.getElementById('showQrBtn');
+        if (qrBtn) {
+          qrBtn.addEventListener('click', function() {
+            const qrDiv = document.getElementById('qrcode');
+            if (qrGenerated) { qrDiv.classList.toggle('hidden'); return; }
+            qrDiv.classList.remove('hidden');
+            qrDiv.innerHTML = '';
+            const qrUrl = `${location.origin}${location.pathname}?guest=${guest.id}`;
+            new QRCode(qrDiv, { text: qrUrl, width: 140, height: 140, colorDark: "#b49450", colorLight: "#fff" });
+            qrGenerated = true;
+          });
+        }
+
+        // Таймер
+        if (window.guestInterval) clearInterval(window.guestInterval);
+        window.guestInterval = setInterval(() => {
+          const el = document.getElementById('countdownTimer');
+          if (el) el.textContent = getTimeUntil(weddingData.date).text;
+        }, 1000);
+      }
+
+      function renderAdmin() {
+        if (!adminAuthenticated) return;
+
+        const timeOptions = [];
+        for (let h = 0; h < 24; h++) {
+          for (let m = 0; m < 60; m += 30) {
+            timeOptions.push(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`);
+          }
+        }
+
+        const timelineRows = weddingData.timeline.map((ev, idx) => `
+        <div class="time-row">
+          <span>${ev.icon} ${ev.title}<\/span>
+          <select data-timeline-idx="${idx}" class="timeline-time">${timeOptions.map(t=>`<option value="${t}" ${ev.time===t?'selected':''}>${t}<\/option>`).join('')}<\/select>
+          <input type="text" value="${ev.description}" data-timeline-idx="${idx}" class="timeline-desc" placeholder="Описание" style="flex:1;">
+        <\/div>`).join('');
+
+        document.getElementById('adminContent').innerHTML = `
+        <div class="admin-section"><h3>👰 Молодожёны<\/h3>
+          <div class="input-group"><label>Невеста<\/label><input id="brideInput" value="${weddingData.bride}"><\/div>
+          <div class="input-group"><label>Жених<\/label><input id="groomInput" value="${weddingData.groom}"><\/div>
+        <\/div>
+        <div class="admin-section"><h3>📅 Дата свадьбы<\/h3>
+          <input type="datetime-local" id="weddingDateInput" value="${weddingData.date.substring(0,16)}">
+        <\/div>
+        <div class="admin-section"><h3>⏰ Время событий<\/h3>${timelineRows}<\/div>
+        <button class="save-btn" id="saveAdminBtn">💾 Сохранить все изменения<\/button>
+        <p style="text-align:center; margin-top:12px; color:#b49450;">После сохранения гость увидит обновления<\/p>
+      `;
+
+        document.getElementById('saveAdminBtn').addEventListener('click', () => {
+          weddingData.bride = document.getElementById('brideInput').value || weddingData.bride;
+          weddingData.groom = document.getElementById('groomInput').value || weddingData.groom;
+          weddingData.date = document.getElementById('weddingDateInput').value + ':00';
+
+          document.querySelectorAll('.timeline-time').forEach(sel => {
+            const idx = sel.dataset.timelineIdx;
+            weddingData.timeline[idx].time = sel.value;
+          });
+          document.querySelectorAll('.timeline-desc').forEach(inp => {
+            const idx = inp.dataset.timelineIdx;
+            weddingData.timeline[idx].description = inp.value;
+          });
+
+          saveData();
+          renderGuest(currentGuest);
+          alert('✅ Настройки сохранены! Гостевая страница обновлена.');
+        });
+      }
+
+      // ========== ЛОГИКА МОДАЛЬНОГО ОКНА ==========
+      function showPasswordModal() {
+        document.getElementById('passwordModal').classList.remove('hidden');
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordError').classList.add('hidden');
+        setTimeout(() => document.getElementById('passwordInput').focus(), 100);
+      }
+
+      function hidePasswordModal() {
+        document.getElementById('passwordModal').classList.add('hidden');
+      }
+
+      function checkPassword() {
+        const input = document.getElementById('passwordInput').value;
+        if (input === CORRECT_PASSWORD) {
+          adminAuthenticated = true;
+          hidePasswordModal();
+          // Активируем вкладку автора
+          document.getElementById('adminTabBtn').classList.add('active');
+          document.getElementById('guestTabBtn').classList.remove('active');
+          document.getElementById('adminPanel').classList.add('active');
+          document.getElementById('guestPanel').classList.remove('active');
+          renderAdmin();
+        } else {
+          document.getElementById('passwordError').classList.remove('hidden');
+          document.getElementById('passwordInput').value = '';
+          document.getElementById('passwordInput').focus();
+        }
+      }
+
+      // ========== ОБРАБОТЧИКИ ==========
+      document.getElementById('confirmPasswordBtn').addEventListener('click', checkPassword);
+      
+      document.getElementById('cancelPasswordBtn').addEventListener('click', function() {
+        hidePasswordModal();
+        // Возвращаемся на вкладку гостя
+        document.getElementById('guestTabBtn').classList.add('active');
+        document.getElementById('adminTabBtn').classList.remove('active');
+        document.getElementById('guestPanel').classList.add('active');
+        document.getElementById('adminPanel').classList.remove('active');
+      });
+
+      document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') checkPassword();
+      });
+
+      // Закрытие по клику на оверлей (тёмный фон)
+      document.getElementById('passwordModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          hidePasswordModal();
+          document.getElementById('guestTabBtn').classList.add('active');
+          document.getElementById('adminTabBtn').classList.remove('active');
+          document.getElementById('guestPanel').classList.add('active');
+          document.getElementById('adminPanel').classList.remove('active');
+        }
+      });
+
+      // Вкладка "Гость" — всегда свободный доступ
+      document.getElementById('guestTabBtn').addEventListener('click', () => {
+        document.getElementById('guestTabBtn').classList.add('active');
+        document.getElementById('adminTabBtn').classList.remove('active');
+        document.getElementById('guestPanel').classList.add('active');
+        document.getElementById('adminPanel').classList.remove('active');
+        hidePasswordModal();
+        renderGuest(currentGuest);
+      });
+
+      // Вкладка "Автор проекта" — ТОЛЬКО здесь появляется модалка
+      document.getElementById('adminTabBtn').addEventListener('click', () => {
+        if (adminAuthenticated) {
+          document.getElementById('adminTabBtn').classList.add('active');
+          document.getElementById('guestTabBtn').classList.remove('active');
+          document.getElementById('adminPanel').classList.add('active');
+          document.getElementById('guestPanel').classList.remove('active');
+          renderAdmin();
+        } else {
+          // Не переключаем вкладки, просто показываем модалку
+          showPasswordModal();
+        }
+      });
+
+      // ========== ЗАПУСК ==========
+      renderGuest(currentGuest);
+    })();
+  <\/script>
+</body>
+</html>
