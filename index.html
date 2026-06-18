@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>Свадебный навигатор • Александра и Дмитрий</title>
+  <title>Свадебный навигатор • Александ��а и Дмитрий</title>
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <style>
     * {
@@ -539,9 +539,8 @@
       const CORRECT_PASSWORD = "2310";
       let weddingData = JSON.parse(JSON.stringify(defaultData));
       let adminAuthenticated = false;
-      let currentGuest = weddingData.guests[0]; // По умолчанию первый гость
+      let currentGuest = weddingData.guests[0];
 
-      // Загрузка из localStorage
       if (localStorage.getItem('weddingCustomData')) {
         try {
           const saved = JSON.parse(localStorage.getItem('weddingCustomData'));
@@ -554,7 +553,6 @@
         localStorage.setItem('weddingCustomData', JSON.stringify(weddingData));
       }
 
-      // ========== ФУНКЦИИ ==========
       function getTimeUntil(dateStr) {
         const weddingDate = new Date(dateStr);
         const now = new Date();
@@ -603,38 +601,36 @@
           const isMine = p.n === guest.table;
           svgCircles +=
             `<circle cx="${p.cx}" cy="${p.cy}" r="32" fill="${isMine?'#d4af37':'#f3e9d2'}" stroke="${isMine?'#b49450':'#cfbc93'}" stroke-width="2.5" class="table-circle ${isMine?'table-highlight':''}" data-table="${p.n}" />
-        <text x="${p.cx}" y="${p.cy+4}" text-anchor="middle" fill="${isMine?'#fff':'#5e5342'}" font-size="14" font-weight="bold">${p.n}<\/text>`;
+        <text x="${p.cx}" y="${p.cy+4}" text-anchor="middle" fill="${isMine?'#fff':'#5e5342'}" font-size="14" font-weight="bold">${p.n}</text>`;
         });
 
         let menuHtml = '';
         weddingData.menu.forEach(cat => {
           menuHtml +=
-            `<div class="menu-category"><div class="menu-header" data-cat="${cat.category}"><span>${cat.category}<\/span><span>▾<\/span><\/div>
-        <div class="dishes" data-cat="${cat.category}">${cat.dishes.map(d=>`<div class="dish">🍴 ${d} ${dishHasAllergen(d,guestAllergies)?'<span class="allergy-warning">⚠��� аллерген<\/span>':''}<\/div>`).join('')}<\/div><\/div>`;
+            `<div class="menu-category"><div class="menu-header" data-cat="${cat.category}"><span>${cat.category}</span><span>▾</span></div>
+        <div class="dishes" data-cat="${cat.category}">${cat.dishes.map(d=>`<div class="dish">🍴 ${d} ${dishHasAllergen(d,guestAllergies)?'<span class="allergy-warning">⚠️ аллерген</span>':''}</div>`).join('')}</div></div>`;
         });
 
-        // Создаем список гостей для выпадающего меню
         const guestOptions = weddingData.guests.map(g => 
-          `<option value="${g.id}" ${g.id === guest.id ? 'selected' : ''}>${g.name} (Стол ${g.table})<\/option>`
+          `<option value="${g.id}" ${g.id === guest.id ? 'selected' : ''}>${g.name} (Стол ${g.table})</option>`
         ).join('');
 
         document.getElementById('guestContent').innerHTML = `
-        <div class="greeting"><h1>${weddingData.bride} & ${weddingData.groom}<\/h1><\/div>
+        <div class="greeting"><h1>${weddingData.bride} & ${weddingData.groom}</h1></div>
         <div class="guest-selector">
           <select id="guestSelect">
-            <option value="">-- Выберите гостя --<\/option>
+            <option value="">-- Выберите гостя --</option>
             ${guestOptions}
-          <\/select>
-        <\/div>
-        <div class="guest-name">${guest.name}, добро пожаловать!<\/div>
-        <div class="countdown-section"><div style="font-size:0.9rem;color:#8b7a62;">До начала:<\/div><div class="timer" id="countdownTimer">${timerData.text}<\/div><\/div>
-        <div class="timeline"><h2>⏳ Таймлайн<\/h2><div class="event-list">${weddingData.timeline.map((e,i)=>`<div class="event ${i===activeIdx?'active':''}"><div class="event-emoji">${e.icon}<\/div><div class="event-info"><div class="event-time">${e.time}<\/div><div class="event-title">${e.title}<\/div><div class="event-desc">${e.description}<\/div><\/div><\/div>`).join('')}<\/div><\/div>
-        <div class="seating"><h2>🪑 План рассадки<\/h2><svg viewBox="0 0 300 230" class="seating-svg">${svgCircles}<\/svg><div id="tableDetails" class="table-tooltip">Ваш стол: ${guest.table} «${weddingData.tables.find(t=>t.number===guest.table)?.name||''}<\/div><\/div>
-        <div class="menu-section"><h2>🍽️ Меню<\/h2>${menuHtml}${guestAllergies.length?`<p style="color:#b49450;">⚠️ Учтены ваши аллергии: ${guest.allergies.join(', ')}<\/p>`:''}<\/div>
-        <div class="qr-section"><button class="qr-btn" id="showQrBtn">📱 Показать QR-код для ${guest.name}<\/button><div id="qrcode" class="hidden"><\/div><\/div>
+          </select>
+        </div>
+        <div class="guest-name">${guest.name}, добро пожаловать!</div>
+        <div class="countdown-section"><div style="font-size:0.9rem;color:#8b7a62;">До начала:</div><div class="timer" id="countdownTimer">${timerData.text}</div></div>
+        <div class="timeline"><h2>⏳ Таймлайн</h2><div class="event-list">${weddingData.timeline.map((e,i)=>`<div class="event ${i===activeIdx?'active':''}"><div class="event-emoji">${e.icon}</div><div class="event-info"><div class="event-time">${e.time}</div><div class="event-title">${e.title}</div><div class="event-desc">${e.description}</div></div></div>`).join('')}</div></div>
+        <div class="seating"><h2>🪑 План рассадки</h2><svg viewBox="0 0 300 230" class="seating-svg">${svgCircles}</svg><div id="tableDetails" class="table-tooltip">Ваш стол: ${guest.table} «${weddingData.tables.find(t=>t.number===guest.table)?.name||''}»</div></div>
+        <div class="menu-section"><h2>🍽️ Меню</h2>${menuHtml}${guestAllergies.length?`<p style="color:#b49450;">⚠️ Учтены ваши аллергии: ${guest.allergies.join(', ')}</p>`:''}</div>
+        <div class="qr-section"><button class="qr-btn" id="showQrBtn">📱 Показать QR-код для ${guest.name}</button><div id="qrcode" class="hidden"></div></div>
       `;
 
-        // Обработчик выбора гостя
         const guestSelect = document.getElementById('guestSelect');
         if (guestSelect) {
           guestSelect.addEventListener('change', function() {
@@ -649,7 +645,6 @@
           });
         }
 
-        // Аккордеон меню
         document.querySelectorAll('.menu-header').forEach(h => h.addEventListener('click', function() {
           const cat = this.dataset.cat;
           const dishesDiv = document.querySelector(`.dishes[data-cat="${cat}"]`);
@@ -658,7 +653,6 @@
         const firstDish = document.querySelector('.dishes');
         if (firstDish) firstDish.classList.add('open');
 
-        // Клик по столам
         document.querySelectorAll('.table-circle').forEach(c => c.addEventListener('click', function() {
           const n = parseInt(this.dataset.table);
           const t = weddingData.tables.find(t => t.number === n);
@@ -667,7 +661,6 @@
             `✨ Стол ${n} «${t.name}»: ${t.guests.join(', ')}`;
         }));
 
-        // QR-код
         let qrGenerated = false;
         const qrBtn = document.getElementById('showQrBtn');
         if (qrBtn) {
@@ -682,7 +675,6 @@
           });
         }
 
-        // Таймер
         if (window.guestInterval) clearInterval(window.guestInterval);
         window.guestInterval = setInterval(() => {
           const el = document.getElementById('countdownTimer');
@@ -702,22 +694,22 @@
 
         const timelineRows = weddingData.timeline.map((ev, idx) => `
         <div class="time-row">
-          <span>${ev.icon} ${ev.title}<\/span>
-          <select data-timeline-idx="${idx}" class="timeline-time">${timeOptions.map(t=>`<option value="${t}" ${ev.time===t?'selected':''}>${t}<\/option>`).join('')}<\/select>
+          <span>${ev.icon} ${ev.title}</span>
+          <select data-timeline-idx="${idx}" class="timeline-time">${timeOptions.map(t=>`<option value="${t}" ${ev.time===t?'selected':''}>${t}</option>`).join('')}</select>
           <input type="text" value="${ev.description}" data-timeline-idx="${idx}" class="timeline-desc" placeholder="Описание" style="flex:1;">
-        <\/div>`).join('');
+        </div>`).join('');
 
         document.getElementById('adminContent').innerHTML = `
-        <div class="admin-section"><h3>👰 Молодожёны<\/h3>
-          <div class="input-group"><label>Невеста<\/label><input id="brideInput" value="${weddingData.bride}"><\/div>
-          <div class="input-group"><label>Жених<\/label><input id="groomInput" value="${weddingData.groom}"><\/div>
-        <\/div>
-        <div class="admin-section"><h3>📅 Дата свадьбы<\/h3>
+        <div class="admin-section"><h3>👰 Молодожёны</h3>
+          <div class="input-group"><label>Невеста</label><input id="brideInput" value="${weddingData.bride}"></div>
+          <div class="input-group"><label>Жених</label><input id="groomInput" value="${weddingData.groom}"></div>
+        </div>
+        <div class="admin-section"><h3>📅 Дата свадьбы</h3>
           <input type="datetime-local" id="weddingDateInput" value="${weddingData.date.substring(0,16)}">
-        <\/div>
-        <div class="admin-section"><h3>⏰ Время событий<\/h3>${timelineRows}<\/div>
-        <button class="save-btn" id="saveAdminBtn">💾 Сохранить все изменения<\/button>
-        <p style="text-align:center; margin-top:12px; color:#b49450;">После сохранения гость увидит обновления<\/p>
+        </div>
+        <div class="admin-section"><h3>⏰ Время событий</h3>${timelineRows}</div>
+        <button class="save-btn" id="saveAdminBtn">💾 Сохранить все изменения</button>
+        <p style="text-align:center; margin-top:12px; color:#b49450;">После сохранения гость увидит обновления</p>
       `;
 
         document.getElementById('saveAdminBtn').addEventListener('click', () => {
@@ -740,7 +732,6 @@
         });
       }
 
-      // ========== ЛОГИКА МОДАЛЬНОГО ОКНА ==========
       function showPasswordModal() {
         document.getElementById('passwordModal').classList.remove('hidden');
         document.getElementById('passwordInput').value = '';
@@ -757,7 +748,6 @@
         if (input === CORRECT_PASSWORD) {
           adminAuthenticated = true;
           hidePasswordModal();
-          // Активируем вкладку автора
           document.getElementById('adminTabBtn').classList.add('active');
           document.getElementById('guestTabBtn').classList.remove('active');
           document.getElementById('adminPanel').classList.add('active');
@@ -770,12 +760,10 @@
         }
       }
 
-      // ========== ОБРАБОТЧИКИ ==========
       document.getElementById('confirmPasswordBtn').addEventListener('click', checkPassword);
       
       document.getElementById('cancelPasswordBtn').addEventListener('click', function() {
         hidePasswordModal();
-        // Возвращаемся на вкладку гостя
         document.getElementById('guestTabBtn').classList.add('active');
         document.getElementById('adminTabBtn').classList.remove('active');
         document.getElementById('guestPanel').classList.add('active');
@@ -786,7 +774,6 @@
         if (e.key === 'Enter') checkPassword();
       });
 
-      // Закрытие по клику на оверлей (тёмный фон)
       document.getElementById('passwordModal').addEventListener('click', function(e) {
         if (e.target === this) {
           hidePasswordModal();
@@ -797,7 +784,6 @@
         }
       });
 
-      // Вкладка "Гость" — всегда свободный доступ
       document.getElementById('guestTabBtn').addEventListener('click', () => {
         document.getElementById('guestTabBtn').classList.add('active');
         document.getElementById('adminTabBtn').classList.remove('active');
@@ -807,7 +793,6 @@
         renderGuest(currentGuest);
       });
 
-      // Вкладка "Автор проекта" — ТОЛЬКО здесь появляется модалка
       document.getElementById('adminTabBtn').addEventListener('click', () => {
         if (adminAuthenticated) {
           document.getElementById('adminTabBtn').classList.add('active');
@@ -816,14 +801,12 @@
           document.getElementById('guestPanel').classList.remove('active');
           renderAdmin();
         } else {
-          // Не переключаем вкладки, просто показываем модалку
           showPasswordModal();
         }
       });
 
-      // ========== ЗАПУСК ==========
       renderGuest(currentGuest);
     })();
-  <\/script>
+  </script>
 </body>
 </html>
